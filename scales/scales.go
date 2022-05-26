@@ -5,9 +5,6 @@ import (
     "fmt"
 )
 
-// Scales is a collection of scales
-type Scales []Scale
-
 // Scale define a musical scale, built with degrees
 type Scale struct {
     Name string
@@ -15,33 +12,56 @@ type Scale struct {
 }
 
 // New creates a new Scale.
-func New(name string) *Scale {
+func New() *Scale {
     return &Scale{
-        Name: name,
         intervales: []int{},
     }
 }
 
 // FromNotes build a scale from a string which lists notes of the scale.
-// A scale MUST contains 7 notes.
+// A scale MUST contains at most 7 notes.
 // ** NOT IMPLEMENTED **
 // ex.: 'C D E F G A B'
-func (s *Scale) FromNotes(notes string) error {
+func (s *Scale) FromNotes(name string, notes string) error {
+    s.Name = name
+    s.intervales = []int{}
     splitNotes := strings.Split(notes, " ")
-    if len(splitNotes) != 7 {
+    if len(splitNotes) > 7 || len(splitNotes) == 0 {
         return fmt.Errorf("incorrect number of notes in %s", notes)
     }
     return nil
 }
 
-// FromNotes build a scale from a string which lists degrees of the scale.
-// A scale must contains 7 degrees.
+// FromDegrees build a scale from a string which lists degrees of the scale.
+// A scale must contains at most 7 degrees.
 // ex.: '1 2 3m 4 5b 6 7M'
-func (s *Scale) FromDegrees(degrees string) error {
+func (s *Scale) FromDegrees(name string, degrees string) error {
+    s.Name = name
+    s.intervales = []int{}
     splitDegrees := strings.Split(degrees, " ")
-    if len(splitDegrees) != 7 {
+    if len(splitDegrees) > 7 || len(splitDegrees) == 0 {
         return fmt.Errorf("incorrect number of degrees in %s", degrees)
     }
+    for _, d := range splitDegrees {
+        i, ok := intervales[d]
+        if !ok {
+            return fmt.Errorf("unknown degree in %s ()", d)
+        }
+        s.intervales = append(s.intervales, i)
+    }
+    return nil
+}
+
+// FromDict build a scale from a string which correspond to one scale name from the dictionary.
+// ex.: 'spanish'
+func (s *Scale) FromDict(name string) error {
+    s.Name = name
+    s.intervales = []int{}
+    degrees, ok := dictionary[name]
+    if !ok {
+        return fmt.Errorf("this scale is not referenced: %s", name)
+    }
+    splitDegrees := strings.Split(degrees, " ")
     for _, d := range splitDegrees {
         i, ok := intervales[d]
         if !ok {

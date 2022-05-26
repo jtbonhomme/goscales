@@ -6,11 +6,27 @@ import (
 )
 
 func main() {
-    s := scales.New("C major")
-    s.FromDegrees("1 2 3 4 5 6 7M")
+    s := scales.New()
+
+    fmt.Printf("All scales: %v\n", scales.Scales())
+
+    s.FromDegrees("major", "1 2 3 4 5 6 7M")
     res, err := s.Transpose("C")
     if err != nil {
         panic(err)
     }
-    fmt.Printf("%s scale: %v\n", s.Name, res)
+    fmt.Printf("C %s scale: %v\n", s.Name, res)
+
+    s.FromDict("dorian")
+    res, err = s.Transpose("C")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("C %s scale: %v\n", s.Name, res)
+
+    res, err = s.Transpose("D")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("D %s scale: %v\n", s.Name, res)
 }
